@@ -1,8 +1,16 @@
-# BloodContracts::Monitoring
+[![Build Status](https://travis-ci.org/sclinede/blood_contracts-ext.svg?branch=master)][travis]
+[![Code Climate](https://codeclimate.com/github/sclinede/blood_contracts-ext/badges/gpa.svg)][codeclimate]
+[![Inch CI](https://inch-ci.org/github/sclinede/blood_contracts-instrumentation.svg?branch=master)][inch_ci]
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/blood_contracts/monitoring`. To experiment with that code, run `bin/console` for an interactive prompt.
+[gem]: https://rubygems.org/gems/blood_contracts-instrumentation
+[travis]: https://travis-ci.org/sclinede/blood_contracts-instrumentation
+[codeclimate]: https://codeclimate.com/github/sclinede/blood_contracts-instrumentation
+[inch_ci]: https://inch-ci.org/github/sclinede/blood_contracts-instrumentation
 
-TODO: Delete this and the text above, and describe your gem
+
+# BloodContracts::Instrumentation
+
+...WIP...
 
 ## Installation
 
