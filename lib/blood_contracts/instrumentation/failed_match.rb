@@ -1,11 +1,23 @@
+# frozen_string_literal: true
+
 module BloodContracts
   module Instrumentation
-    class FailedMatch < ::BC::ContractFailure;
-      def initialize(value = nil, context: {}, **)
+    # Wrapper for exception happend during the match instrumentation
+    # Should not be used in the app, to distinguish between expected and
+    # unexpected failures
+    class FailedMatch < ::BC::ContractFailure
+      # Initialize failure type with exception
+      #
+      # @param value [Exception] rescued exception from the type match
+      # @option context [Hash] shared context of matching pipeline
+      #
+      # @return [FailedMatch]
+      #
+      def initialize(exception, context: {})
         @errors = []
         @context = context
-        @value = value
-        @context[:exception] = value
+        @value = exception
+        @context[:exception] = exception
       end
 
       # Predicate, whether the data is valid or not
