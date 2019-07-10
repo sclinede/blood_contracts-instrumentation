@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
+require "set"
+
 module BloodContracts
   module Instrumentation
     # Class that configures the instrumentation for refinement types matching
     class Config
       # Map of instrument classes where the key is the matching pattern
       #
-      # @return [Hash<Regexp, Instrument>]
+      # @return [Hash<Regexp, Array<Instrument>>]
       #
       attr_reader :instruments
 
@@ -32,9 +34,10 @@ module BloodContracts
       # Also inits the SessionFinalizer
       def initialize
         @instruments = {}
-        @types = []
         @finalizer_pool_size = SessionFinalizer::DEFAULT_POOL_SIZE
         @session_finalizer = :basic
+
+        reset_types!
         reset_session_finalizer!
       end
 
@@ -45,7 +48,9 @@ module BloodContracts
       # @return [Integer]
       #
       def finalizer_pool_size=(value)
-        @finalizer_pool_size = Integer(value).tap { reset_session_finalizer! }
+        @finalizer_pool_size = Integer(value)
+      ensure
+        reset_session_finalizer!
       end
 
       # Set the type of SessionFinalizer for instrumentation
@@ -57,7 +62,9 @@ module BloodContracts
       # @return [Symbol]
       #
       def session_finalizer=(value)
-        @session_finalizer = value.tap { reset_session_finalizer! }
+        @session_finalizer = value
+      ensure
+        reset_session_finalizer!
       end
 
       # Main setting in the config
@@ -80,17 +87,23 @@ module BloodContracts
       def instrument(pattern, processor, **kwargs)
         pattern = /#{pattern}/i unless pattern.is_a?(Regexp)
 
-        @instruments[pattern] = Instrument.build(processor, **kwargs)
+        old_value = @instruments[pattern].to_a
+        new_value = old_value << Instrument.build(processor, **kwargs)
+        @instruments[pattern] = new_value
+
         reset_cache!(pattern)
       end
 
-      # @private
+      # @protected
       # Select only instruments matching the type_name
       protected def select_instruments(type_name)
-        @instruments.select { |pattern, _| type_name =~ /#{pattern}/i }.values
+        @instruments.flat_map do |pattern, instruments|
+          next unless type_name =~ /#{pattern}/i
+          instruments
+        end.compact
       end
 
-      # @private
+      # @protected
       # Reset instruments cache for refinement types that match filter
       protected def reset_cache!(filter = nil)
         filter = /#{filter}/i unless filter.is_a?(Regexp)
@@ -98,7 +111,12 @@ module BloodContracts
         types.each { |type| type.reset_instruments! if type.name =~ filter }
       end
 
-      # @private
+      # @protected
+      protected def reset_types!
+        @types = Set.new
+      end
+
+      # @protected
       # Reset session finalizer instance using current config
       protected def reset_session_finalizer!
         SessionFinalizer.init(session_finalizer, pool_size: finalizer_pool_size)

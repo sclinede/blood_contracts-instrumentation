@@ -67,3 +67,6 @@ module BloodContracts
     require_relative "./instrumentation/config.rb"
   end
 end
+
+# Alias for top-level BloodContracts instrumentation
+BCI = BloodContracts::Instrumentation

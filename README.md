@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/sclinede/blood_contracts-ext.svg?branch=master)][travis]
-[![Code Climate](https://codeclimate.com/github/sclinede/blood_contracts-ext/badges/gpa.svg)][codeclimate]
+[![Build Status](https://travis-ci.org/sclinede/blood_contracts-instrumentation.svg?branch=master)][travis]
+[![Code Climate](https://codeclimate.com/github/sclinede/blood_contracts-instrumentation/badges/gpa.svg)][codeclimate]
 [![Inch CI](https://inch-ci.org/github/sclinede/blood_contracts-instrumentation.svg?branch=master)][inch_ci]
 
 [gem]: https://rubygems.org/gems/blood_contracts-instrumentation

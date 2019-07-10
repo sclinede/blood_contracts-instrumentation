@@ -7,6 +7,7 @@ module BloodContracts
       # Adds @session initialization to constructor
       def initialize(*)
         super
+        self.class.instruments
         @session = self.class.session_klass.new(self.class.name)
       end
 
@@ -109,6 +110,10 @@ module BloodContracts
 
             reset_instruments!
           end
+
+          # Alias for instruments reader
+          # See #instruments
+          alias setup_instruments instruments
 
           # Reset the List of instruments for the type
           # Note, that if list of instruments is empty there is no need to

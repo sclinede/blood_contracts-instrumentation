@@ -27,7 +27,7 @@ module BloodContracts
       # @return [#finalize!]
       #
       def instance
-        Thread.current[:bc_session_processor] ||=
+        Thread.current[:bc_session_finalizer] ||=
           Instrumentation.reset_session_finalizer!
       end
 

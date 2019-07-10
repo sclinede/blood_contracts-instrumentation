@@ -26,17 +26,27 @@ module BloodContracts
         def build(proto, before: nil, after: nil)
           raise ArgumentError unless proto.respond_to?(:call)
 
-          inst = instrument_from_proc(proto)
+          instance = instrument_from_proc(proto)
 
           if before.respond_to?(:call)
             inst.define_singleton_method(:before, &before)
           end
 
+          define_stub(instance, :before)
+
           if after.respond_to?(:call)
-            inst.define_singleton_method(:after, &after)
+            instance.define_singleton_method(:after, &after)
           end
 
-          inst
+          define_stub(instance, :after)
+
+          instance
+        end
+
+        private def define_stub(instance, name)
+          return if instance.respond_to?(name)
+
+          instance.define_singleton_method(name) { |_| }
         end
 
         # @private

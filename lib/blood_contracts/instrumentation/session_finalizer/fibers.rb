@@ -11,6 +11,12 @@ module BloodContracts
         # instruments
         STARVATION_MSG = "WARNING! BC::Instrumentation fiber starvation!"
 
+        # Pool of Fibers to finalize instrumentation session
+        #
+        # @return [Array<Fiber>]
+        #
+        attr_reader :fibers
+
         # Initialize the fibers pool
         #
         # @param pool_size [Integer] number of fibers to use in a single run
@@ -56,7 +62,7 @@ module BloodContracts
         protected def create_fiber_with_a_thread
           Fiber.new do |instrument, session|
             loop do
-              thread = Thread.new { instrument.call(session) }
+              thread = Thread.new(instrument, session) { |i, s| i.call(s) }
               @fibers.unshift Fiber.current
               instrument, session = Fiber.yield
               thread.join

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
-require "blood_contracts/monitoring"
+require "blood_contracts/instrumentation"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -12,5 +12,11 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  config.around do |example|
+    module Test; end
+    example.run
+    Object.send(:remove_const, :Test)
   end
 end

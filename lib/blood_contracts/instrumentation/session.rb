@@ -59,6 +59,14 @@ module BloodContracts
       #
       attr_reader :extras
 
+      # Whether the result was valid or not
+      #
+      # @return [Boolean]
+      #
+      def valid?
+        !!@valid
+      end
+
       # Initialize the session with matcher type name with defaults
       #
       # @param type_name [String] name of the type which owns the session
@@ -101,6 +109,7 @@ module BloodContracts
       def finish(type_match)
         @finished_at = Time.now
         @context = type_match.context.dup.freeze if type_match
+        @valid = type_match&.valid?
 
         @result_type_name = type_match&.class&.name || NO_TYPE_MATCH
         @id =    @context.fetch(:session_id) { @id }
