@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |gem|
   gem.name          = 'blood_contracts-instrumentation'
-  gem.version       = '0.1.0'
+  gem.version       = '0.1.1'
   gem.authors       = ['Sergey Dolganov (sclinede)']
   gem.email         = ['sclinede@evilmartians.com']
 
