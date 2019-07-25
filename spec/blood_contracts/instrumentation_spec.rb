@@ -2,6 +2,8 @@
 
 RSpec.describe BloodContracts::Instrumentation do
   before do
+    BCI.configure { |config| config.send(:reset_types!) }
+
     module Test
       require "json"
 
@@ -57,7 +59,9 @@ RSpec.describe BloodContracts::Instrumentation do
     context "when type matches instruments condition" do
       let(:type) { Test::JsonType.name }
 
-      it { is_expected.to match_array([kind_of(described_class::Instrument)]) }
+      it do
+        is_expected.to match_array([kind_of(BCI::Instrument)])
+      end
     end
 
     context "when type doesn't match instruments condition" do

@@ -29,7 +29,7 @@ module BloodContracts
           instance = instrument_from_proc(proto)
 
           if before.respond_to?(:call)
-            inst.define_singleton_method(:before, &before)
+            instance.define_singleton_method(:before, &before)
           end
 
           define_stub(instance, :before)

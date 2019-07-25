@@ -56,6 +56,14 @@ module BloodContracts
       @config ||= Config.new
     end
 
+    # Resets current instance of Config
+    #
+    # @return [Nothig]
+    #
+    def reset_config!
+      @config = nil
+    end
+
     require_relative "./instrumentation/failed_match.rb"
     require_relative "./instrumentation/session.rb"
 
