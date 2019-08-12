@@ -88,6 +88,27 @@ Finally, you may want to verify, which instruments are already attached to the t
 ```
 
 That's pretty much it!
+
+*Uh, oh!* Almost forgot, you could choose the strategy for instrumentation finalizer.
+Imagine that you want to write some debug data into DB. In some cases that will affect the performance of your
+type matching. To minimize that effect you could try to use Fibers or Threads as simple as:
+
+```ruby
+# config/initializers/contracts.rb
+
+BloodContracts::Instrumentation.configure do |cfg|
+  # Attach to every BC::Refined ancestor with Rubygems in the name
+  cfg.instrument /Rubygems.*Contract/, Contracts::YabedaInstrument.new
+
+  # Attach to every BC::Refined ancestor with Github in the name
+  cfg.instrument /Github.*Contract/, Contracts::YabedaInstrument.new
+
+  cfg.finalizer = :fibers # or :threads, or :basic
+end
+```
+
+See more info about Finalizers here: [Basic](lib/blood_contracts/instrumentation/session_finalizer/basic.rb), [Fibers](lib/blood_contracts/instrumentation/session_finalizer/fibers.rb), [Threads](lib/blood_contracts/instrumentation/session_finalizer/threads.rb)
+
 Enjoy!
 
 ## Development
