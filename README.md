@@ -49,14 +49,13 @@ Or install it yourself as:
 ## Usage
 
 Most of the time you will use only BloodContracts::Instrumentation.configure call. It gives you access to instrumentation
-config and add different instruments to different types by name.
-First argument is a String or Regex which will be checked against all Refinement types.
+config and adds different instruments to types by name.
+First argument is a String or Regex which will used to find relevant Refined type to attach.
 The second argument is the actual "instrument".
 
 The simplest instrument is just a lambda with 1 argument _session_, but in advanced case, you could implement "instrument" as a class.
 
-For example, we use [Yabeda](https://github.com/yabeda-rb/yabeda) for instrumentation. So you could introduce Yabeda
-instrument for that:
+For example, we use [Yabeda](https://github.com/yabeda-rb/yabeda) for instrumentation. So you could introduce Yabeda instrument for that:
 
 ```ruby
 # config/initializers/contracts.rb
