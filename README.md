@@ -66,7 +66,7 @@ module Contracts
     def call(session)
       valid_marker = session.valid? ? "V" : "I"
       result = "[#{valid_marker}] #{session.result_type_name}"
-      Yabeda.rubygems.api_contract_matches.increment(result: result)
+      Yabeda.api_contract_matches.increment(result: result)
     end
   end
 end
