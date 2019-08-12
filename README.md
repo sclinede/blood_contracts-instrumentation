@@ -10,14 +10,32 @@
 
 # BloodContracts::Instrumentation
 
-...WIP...
+Refinement types are implemented in [BloodContracts::Core](https://github.com/sclinede/blood_contracts-core), but in production first of all we have to understand
+which types are used and how frequently. In other words we need instrumentation for types.
+
+Let's say, we want to log to STDOUT every match of your Rubygems API contract:
+```ruby
+BloodContracts::Instrumentation.configure do |cfg|
+  # Attach to every BC::Refined ancestor with Rubygems in the name
+  cfg.instrument /Rubygems/, lambda { |session|
+
+    # see Session class API at lib/blood_contracts/instrumentation/session.rb
+    puts "SID:#{session.id} "\
+         "Duration: #{session.finished_at - session.started_at} "\
+         "Result: #{session.result_type_name}"
+  }
+end
+
+```
+
+Welcome, **Instrumentation for BloodContracts**.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'blood_contracts-monitoring'
+gem 'blood_contracts-instrumentation'
 ```
 
 And then execute:
@@ -26,11 +44,53 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install blood_contracts-monitoring
+    $ gem install blood_contracts-instrumentation
 
 ## Usage
 
-TODO: Write usage instructions here
+Most of the time you will use only BloodContracts::Instrumentation.configure call. It gives you access to instrumentation
+config and add different instruments to different types by name.
+First argument is a String or Regex which will be checked against all Refinement types.
+The second argument is the actual "instrument".
+
+The simplest instrument is just a lambda with 1 argument _session_, but you may face advanced curcumstances, then you
+could implement "instrument" as an object.
+
+For example, we use [Yabeda](https://github.com/yabeda-rb/yabeda) for instrumentation. So you could introduce Yabeda
+instrument for that:
+
+```ruby
+# config/initializers/contracts.rb
+
+module Contracts
+  class YabedaInstrument
+    def call(session)
+      valid_marker = session.valid? ? "V" : "I"
+      result = "[#{valid_marker}] #{session.result_type_name}"
+      Yabeda.rubygems.api_contract_matches.increment(result: result)
+    end
+  end
+end
+
+BloodContracts::Instrumentation.configure do |cfg|
+  # Attach to every BC::Refined ancestor with Rubygems in the name
+  cfg.instrument /Rubygems.*Contract/, Contracts::YabedaInstrument.new
+
+  # Attach to every BC::Refined ancestor with Github in the name
+  cfg.instrument /Github.*Contract/, Contracts::YabedaInstrument.new
+end
+```
+
+For more details see [Instrument class](lib/blood_contracts/instrumentation/instrument.rb)
+
+Finally, you may want to verify, which instruments are already attached to the type:
+```
+[1] pry(main)> RubygemsAPI::Contract.instruments
+=> [#<Contracts::YabedaInstrument:0x00007fe89ad322c0>, #<Contracts::FailuresInstrument:0x00007fe89ad39e30>]
+```
+
+That's pretty much it!
+Enjoy!
 
 ## Development
 
@@ -40,7 +100,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/sclinede/blood_contracts-monitoring. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/sclinede/blood_contracts-instrumentation. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
@@ -48,4 +108,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the BloodContracts::Monitoring project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/sclinede/blood_contracts-monitoring/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the BloodContracts::Instrumentation project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/sclinede/blood_contracts-instrumentation/blob/master/CODE_OF_CONDUCT.md).

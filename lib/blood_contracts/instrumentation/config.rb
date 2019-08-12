@@ -112,6 +112,7 @@ module BloodContracts
       end
 
       # @protected
+      # Turns types cache empty
       protected def reset_types!
         @types = Set.new
       end
